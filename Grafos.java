@@ -3,6 +3,7 @@ import java.util.*;
 public class Grafos {
     int Vertices; // Numero de vertices
     ArrayList<ArrayList<Integer>> ListaAdy; // Lista de adyacencia
+    int[][] MatrizAdy; // Matriz de adyacencia
     boolean[] Visitados; // Para marcar los vertices visitados
     LinkedList<Integer> Cola; // Se crea una cola que almacena los nodos a visitar
     Stack<Integer> Pila; // Se crea una pila para los vertices a visitar
@@ -14,6 +15,12 @@ public class Grafos {
         for (int i = 0; i < vertices; i++) {
             ListaAdy.add(new ArrayList<>());
         }
+        MatrizAdy = new int[vertices][vertices];
+        for (int i = 0; i < vertices; i++) {
+            for (int j = 0; j < vertices; j++) {
+                MatrizAdy[i][j] = Integer.MAX_VALUE;
+            }
+        }
         Visitados = new boolean[vertices];
         Cola = new LinkedList<>();
         Pila = new Stack<>();
@@ -23,6 +30,11 @@ public class Grafos {
     public void AgregarArista(int v, int w) {
         // Agrega las aristas a la lista de adyacencia
         ListaAdy.get(v).add(w);
+    }
+
+    // Agregar Arista Para Dijkstra
+    public void AggAristaDijkstra(int v, int w, int peso) {
+        MatrizAdy[v][w] = peso;
     }
 
     // Metodos = Algoritmos
@@ -141,10 +153,64 @@ public class Grafos {
         }
     }
 
-    public void Dijkstra() {
+    public void Dijkstra(int Origen) {
+        // Inicia el array con el numero de vertices
+        int[] Distancias = new int[Vertices];
+        // Se llena el array con el valor maximo de enteros
+        Arrays.fill(Distancias, Integer.MAX_VALUE);
+        // Indica que la distancia desde el origen hasta el origen es 0
+        Distancias[Origen] = 0;
+        // Se inicia el array con el numero de vertices
+        boolean[] Visitados = new boolean[Vertices];
+
+        for (int i = 0; i < Vertices; i++) {
+            int MasCorto = -1;
+            for (int j = 0; j < Vertices; j++) {
+                if (!Visitados[j] && (MasCorto == -1 || Distancias[j] < Distancias[MasCorto])) {
+                    MasCorto = j;
+                }
+            }
+
+            // Marcar vertice como visitado
+            Visitados[MasCorto] = true;
+            // Actualizar distancias de los vertices adyacentes al mas corto
+            for (int m = 0; m < Vertices; m++) {
+                if (MatrizAdy[MasCorto][m] != Integer.MAX_VALUE && Distancias[MasCorto] + MatrizAdy[MasCorto][m] < Distancias[m]) {
+                    // Actualiza distancias desde origen hasta m
+                    Distancias[m] = Distancias[MasCorto] + MatrizAdy[MasCorto][m];
+                }
+            }
+        }
+
+        // Se imprimen las distancias calculadas
+        System.out.println("Vertice     ---     Distancia");
+        for (int i = 0; i < Vertices; i++) {
+            System.out.println("   " + i + "        ---        " + Distancias[i]);
+        }
     }
 
+    // TENGO MIS DUDAS AQUI, REVISEN
     public void Forward() {
+        double[] Alpha = new double[Vertices];
+        for (int i = 0; i < Vertices; i++) {
+            Alpha[i] = 1.0;
+        }
+
+        // Calcula los valores de Alpha
+        for (int m = 0; m < Vertices; m++) {
+            for (int i = 0; i < Vertices; i++) {
+                double Suma = 0.0;
+                for (int j = 0; j < Vertices; j++) {
+                    Suma = Suma + Alpha[j] * MatrizAdy[j][i];
+                }
+                Alpha[i] = Suma;
+            }
+        }
+
+        // Se imprimen los valores de Alpha
+        for (int i = 0; i < Vertices; i++) {
+            System.out.println("Alpha[" + i + "] = " + Alpha[i]);
+        }
     }
 
     public void BellmanFord() {

@@ -7,6 +7,7 @@ public class Grafos {
     boolean[] Visitados; // Para marcar los vertices visitados
     LinkedList<Integer> Cola; // Se crea una cola que almacena los nodos a visitar
     Stack<Integer> Pila; // Se crea una pila para los vertices a visitar
+    double[][] MatrizTransicion; // Calcula la probabilidad de transición entre los estados ocultos
 
     // Contructor
     public Grafos(int vertices) {
@@ -24,17 +25,19 @@ public class Grafos {
         Visitados = new boolean[vertices];
         Cola = new LinkedList<>();
         Pila = new Stack<>();
+        MatrizTransicion = new double[vertices][vertices];
     }
 
-    // Agregar Arista A Los Grafos; v = Vertice Origen; w = Vertice Destino
-    public void AgregarArista(int v, int w) {
+    // Agregar Arista A Los Grafos
+    public void AgregarArista(int Origen, int Destino) {
         // Agrega las aristas a la lista de adyacencia
-        ListaAdy.get(v).add(w);
+        ListaAdy.get(Origen).add(Destino);
     }
 
-    // Agregar Arista Para Dijkstra
-    public void AggAristaDijkstra(int v, int w, int peso) {
-        MatrizAdy[v][w] = peso;
+    // Agregar Arista Para Algoritmos Con Pesos
+    public void AggAristaPeso(int Origen, int Destino, int peso) {
+        MatrizAdy[Origen][Destino] = peso;
+        ListaAdy.get(Origen).add(Destino);
     }
 
     // Metodos = Algoritmos
@@ -189,31 +192,81 @@ public class Grafos {
         }
     }
 
-    // TENGO MIS DUDAS AQUI, REVISEN
     public void Forward() {
-        double[] Alpha = new double[Vertices];
+        // Inicia la matriz de probabilidades
+        double[][] Alfa = new double[Vertices][Vertices];
+
+        // Inicia la primera fila
         for (int i = 0; i < Vertices; i++) {
-            Alpha[i] = 1.0;
+            Alfa[0][i] = MatrizTransicion[0][i];
         }
 
-        // Calcula los valores de Alpha
-        for (int m = 0; m < Vertices; m++) {
+        // Recorre el resto de filas de la matriz
+        for (int m = 1; m < Vertices; m++) {
             for (int i = 0; i < Vertices; i++) {
                 double Suma = 0.0;
                 for (int j = 0; j < Vertices; j++) {
-                    Suma = Suma + Alpha[j] * MatrizAdy[j][i];
+                    Suma = Suma + Alfa[m-1][j] * MatrizTransicion[j][i];
                 }
-                Alpha[i] = Suma;
+                Alfa[m][i] = Suma;
             }
         }
 
-        // Se imprimen los valores de Alpha
+        // Calcula la probabilidad total
+        double ProbabilidadT = 0;
         for (int i = 0; i < Vertices; i++) {
-            System.out.println("Alpha[" + i + "] = " + Alpha[i]);
+            ProbabilidadT = ProbabilidadT + Alfa[Vertices -1][i];
         }
+
+        // Se imprimen la matriz y probabilidad
+        System.out.println("Matriz Alfa: ");
+        for (int i = 0; i < Vertices; i++) {
+            for (int j = 0; j < Vertices; j++) {
+                System.out.print(Alfa[i][j] + " ");
+            }
+        }
+        System.out.println("\n\nLa probabilidad total es: " + ProbabilidadT);
     }
 
-    public void BellmanFord() {
+    public void BellmanFord(int S) {
+        // Inicia distancia de todos los vertices
+        double[] Distancia = new double[Vertices];
+        for (int i = 0; i < Vertices; i++) {
+            Distancia[i] = Double.MAX_VALUE;
+        }
+
+        // Distancia del inicio es 0
+        Distancia[S] = 0;
+
+        // Busca los caminos mas cortos desde el origen (Sin ciclos negativos)
+        for (int i = 0; i < Vertices; i++) {
+            for (int j = 0; j < Vertices; j++) {
+                for (int k = 0; k < ListaAdy.get(j).size(); k++) {
+                    if (MatrizAdy[j][k] != Integer.MAX_VALUE && Distancia[j] != Double.MAX_VALUE && Distancia[j] + MatrizAdy[j][k] < Distancia[k]) {
+                        Distancia[k] = Distancia[j] + MatrizAdy[j][k];
+                    }
+                }
+            }
+        }
+
+        // Comprueba si hay ciclos negativos
+        for (int i = 0; i < Vertices-1; i++) {
+            for (int j = 0; j < Vertices; j++) {
+                for (int k = 0; k < ListaAdy.get(j).size(); k++) {
+                    if (MatrizAdy[j][k] != Integer.MAX_VALUE && Distancia[j] != Double.MAX_VALUE
+                            && Distancia[j] + MatrizAdy[j][k] < Distancia[k]) {
+                        System.out.println("\nHay un ciclo de peso negativo");
+                        return;
+                    }
+                }
+            }
+        }
+
+        // Imprime las distancias mas cortas
+        System.out.println("Distancia desde el vertice " + S);
+        for (int i = 0; i < Vertices; i++) {
+            System.out.println(i + "      " + Distancia[i]);
+        }
     }
 
     public void DAG_OrdenamientoTopologico() {
@@ -241,7 +294,7 @@ public class Grafos {
     public void Kruskal() {
     }
 
-    public void MST_ArbolDeExpansionMinma() {
+    public void MST_ArbolDeExpansionMinima() {
     }
 
     public static void main(String[] args) {

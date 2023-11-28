@@ -99,6 +99,53 @@ public class Grafos {
     }
 
     public void TMA_MatrimonioEstable() {
+        // Inicia un conjunto libre con vertices
+        ArrayList<Integer> ConjuntoLibre = new ArrayList<>();
+        for (int i = 0; i < Vertices; i++) {
+            ConjuntoLibre.add(i);
+        }
+
+        // Inicia las listas de preferencias
+        ArrayList<ArrayList<Integer>> Preferencias = new ArrayList<>();
+        for (int i = 0; i < Vertices; i++) {
+            Preferencias.add(ListaAdy.get(i));
+        }
+
+        // Inicia los emparejamientos
+        int[] Emparejamiento = new int[Vertices];
+        Arrays.fill(Emparejamiento, -1);
+
+        // Se ejecuta mientras hayan vertices libres
+        while (!ConjuntoLibre.isEmpty()) {
+            // Selecciona un vertice
+            int VLibre = ConjuntoLibre.remove(0);
+
+            // Itera cada vertice preferido del actual
+            for (int VPreferido : Preferencias.get(VLibre)) {
+                // Si el vertice es libre
+                if (ConjuntoLibre.contains(VPreferido)) {
+                    // Propone una pareja
+                    int Anterior = Emparejamiento[VPreferido];
+                    if (Anterior == -1 || Preferencias.get(VPreferido).indexOf(VLibre) < Preferencias.get(VPreferido).indexOf(Anterior)) {
+                        // Si el vertice elegido esta ocupado
+                        if (Anterior != -1) {
+                            ConjuntoLibre.add(Anterior);
+                        }
+
+                        // Si el vertice elegido no esta ocupado
+                        Emparejamiento[VLibre] = VPreferido;
+                        Emparejamiento[VPreferido] = VLibre;
+                        ConjuntoLibre.remove((Integer) VPreferido);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Se imprime el matrimonio estable
+        for (int i = 0; i < Vertices; i++) {
+            System.out.println(i + " en matrimonio con " + Emparejamiento[i]);
+        }
     }
 
     public void BFS_BusquedaEnAmplitud(int S) {
@@ -291,10 +338,43 @@ public class Grafos {
         }
     }
 
-    public void Kruskal() {
-    }
-
     public void MST_ArbolDeExpansionMinima() {
+        int Nodos = MatrizAdy.length; // Numero de nodos en la matriz
+        Visitados = new boolean[Nodos]; // Para marcar nodos como visitados
+        int[] NodoAnterior = new int[Nodos]; // Almacena el nodo anterior
+        int[] Distancia = new int[Nodos]; // Almacena la distancia minima de cada nodo al inicial
+        Arrays.fill(Distancia, Integer.MAX_VALUE); // Llena array con valor maximo
+        Distancia[0] = 0; // Distancia del nodo inicial al mismo es cero
+        int[][] MST = new int[Nodos][Nodos]; // Almacena el arbol de expansion minima
+
+        // Algoritmo Prim
+        for (int i = 0; i <Nodos; i++) {
+            int NoVisitado = -1;
+            // Busca el nodo no visitado cin distancia minima
+            for (int j = 0; j < Nodos; j++) {
+                if (!Visitados[j] && (NoVisitado == -1 || Distancia[j] < Distancia[NoVisitado])) {
+                    NoVisitado = j;
+                }
+            }
+
+            // Marca el nodo como visitado
+            Visitados[NoVisitado] = true;
+
+            // Actualiza los nodos adyacentes
+            for (int j = 0; j < Nodos; j++) {
+                if (MatrizAdy[NoVisitado][j] != Integer.MAX_VALUE && !Visitados[j] && Distancia[j] > MatrizAdy[NoVisitado][j]) {
+                    Distancia[j] = MatrizAdy[NoVisitado][j];
+                    NodoAnterior[j] = NoVisitado;
+                }
+            }
+        }
+
+        // Construye el MST
+        for (int i = 0; i < MST.length; i++) {
+            for (int j = 0; j < MST[i].length; j++) {
+                System.out.print(MST[i][j] + " ");
+            }
+        }
     }
 
     public static void main(String[] args) {

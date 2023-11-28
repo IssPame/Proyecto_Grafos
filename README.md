@@ -37,9 +37,5 @@ Se crean todos los algoritmos vistos en clases para el estudio de Grafos
 # Ordenamiento Topologico (DAG)
 - Toma un grafo aciclico dirigido y produce un ordenamiento lineal de todos sus vertices de tal manera que si el grafo G contiene una arista (v,w) entonces el vertice v está, en el orden, antes del vértice w.
 
-# Kruskal (Pesos Negaivos)
-- Se usa para encontrar un arbol recubridor minimo en un grafo conexo y ponderado.
-- Es decir, busca un subconjunto de aristas que, formando un arbol, incluyen todos los vertices y donde el valor de la suma de todas las aristas del arbol es el minimo.
-
 # Arbol de Expansion Minima (MST)
 - Es aquel que comienza desde un vertice y encuentra todos sus nodos accesibles y las relaciones en conjunto que permiten que se conecten dichos nodos con el menor peso posible.

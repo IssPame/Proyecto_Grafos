@@ -29,14 +29,10 @@ public class Grafos {
     }
 
     // Agregar Arista A Los Grafos
-    public void AgregarArista(int Origen, int Destino) {
-        // Agrega las aristas a la lista de adyacencia
-        ListaAdy.get(Origen).add(Destino);
-    }
-
-    // Agregar Arista Para Algoritmos Con Pesos
-    public void AggAristaPeso(int Origen, int Destino, int peso) {
+    public void AgregarArista(int Origen, int Destino, int peso) {
+        // Agrega el peso de la arista a la matriz de adyacencia
         MatrizAdy[Origen][Destino] = peso;
+        // Agrega el nodo Destino a la lista de adyacencia del nodo Origen
         ListaAdy.get(Origen).add(Destino);
     }
 
@@ -126,7 +122,8 @@ public class Grafos {
                 if (ConjuntoLibre.contains(VPreferido)) {
                     // Propone una pareja
                     int Anterior = Emparejamiento[VPreferido];
-                    if (Anterior == -1 || Preferencias.get(VPreferido).indexOf(VLibre) < Preferencias.get(VPreferido).indexOf(Anterior)) {
+                    if (Anterior == -1 || Preferencias.get(VPreferido).indexOf(VLibre) < Preferencias.get(VPreferido)
+                            .indexOf(Anterior)) {
                         // Si el vertice elegido esta ocupado
                         if (Anterior != -1) {
                             ConjuntoLibre.add(Anterior);
@@ -225,7 +222,8 @@ public class Grafos {
             Visitados[MasCorto] = true;
             // Actualizar distancias de los vertices adyacentes al mas corto
             for (int m = 0; m < Vertices; m++) {
-                if (MatrizAdy[MasCorto][m] != Integer.MAX_VALUE && Distancias[MasCorto] + MatrizAdy[MasCorto][m] < Distancias[m]) {
+                if (MatrizAdy[MasCorto][m] != Integer.MAX_VALUE
+                        && Distancias[MasCorto] + MatrizAdy[MasCorto][m] < Distancias[m]) {
                     // Actualiza distancias desde origen hasta m
                     Distancias[m] = Distancias[MasCorto] + MatrizAdy[MasCorto][m];
                 }
@@ -253,7 +251,7 @@ public class Grafos {
             for (int i = 0; i < Vertices; i++) {
                 double Suma = 0.0;
                 for (int j = 0; j < Vertices; j++) {
-                    Suma = Suma + Alfa[m-1][j] * MatrizTransicion[j][i];
+                    Suma = Suma + Alfa[m - 1][j] * MatrizTransicion[j][i];
                 }
                 Alfa[m][i] = Suma;
             }
@@ -262,7 +260,7 @@ public class Grafos {
         // Calcula la probabilidad total
         double ProbabilidadT = 0;
         for (int i = 0; i < Vertices; i++) {
-            ProbabilidadT = ProbabilidadT + Alfa[Vertices -1][i];
+            ProbabilidadT = ProbabilidadT + Alfa[Vertices - 1][i];
         }
 
         // Se imprimen la matriz y probabilidad
@@ -289,7 +287,8 @@ public class Grafos {
         for (int i = 0; i < Vertices; i++) {
             for (int j = 0; j < Vertices; j++) {
                 for (int k = 0; k < ListaAdy.get(j).size(); k++) {
-                    if (MatrizAdy[j][k] != Integer.MAX_VALUE && Distancia[j] != Double.MAX_VALUE && Distancia[j] + MatrizAdy[j][k] < Distancia[k]) {
+                    if (MatrizAdy[j][k] != Integer.MAX_VALUE && Distancia[j] != Double.MAX_VALUE
+                            && Distancia[j] + MatrizAdy[j][k] < Distancia[k]) {
                         Distancia[k] = Distancia[j] + MatrizAdy[j][k];
                     }
                 }
@@ -297,7 +296,7 @@ public class Grafos {
         }
 
         // Comprueba si hay ciclos negativos
-        for (int i = 0; i < Vertices-1; i++) {
+        for (int i = 0; i < Vertices - 1; i++) {
             for (int j = 0; j < Vertices; j++) {
                 for (int k = 0; k < ListaAdy.get(j).size(); k++) {
                     if (MatrizAdy[j][k] != Integer.MAX_VALUE && Distancia[j] != Double.MAX_VALUE
@@ -348,7 +347,7 @@ public class Grafos {
         int[][] MST = new int[Nodos][Nodos]; // Almacena el arbol de expansion minima
 
         // Algoritmo Prim
-        for (int i = 0; i <Nodos; i++) {
+        for (int i = 0; i < Nodos; i++) {
             int NoVisitado = -1;
             // Busca el nodo no visitado cin distancia minima
             for (int j = 0; j < Nodos; j++) {
@@ -362,7 +361,8 @@ public class Grafos {
 
             // Actualiza los nodos adyacentes
             for (int j = 0; j < Nodos; j++) {
-                if (MatrizAdy[NoVisitado][j] != Integer.MAX_VALUE && !Visitados[j] && Distancia[j] > MatrizAdy[NoVisitado][j]) {
+                if (MatrizAdy[NoVisitado][j] != Integer.MAX_VALUE && !Visitados[j]
+                        && Distancia[j] > MatrizAdy[NoVisitado][j]) {
                     Distancia[j] = MatrizAdy[NoVisitado][j];
                     NodoAnterior[j] = NoVisitado;
                 }
@@ -379,7 +379,24 @@ public class Grafos {
 
     public static void main(String[] args) {
         // Recibe el grafo
+        Grafos Grafo = new Grafos(7);
+
+        Grafo.AgregarArista(1, 2, 3);
+        Grafo.AgregarArista(1, 3, 5);
+        Grafo.AgregarArista(2,4,13);
+        Grafo.AgregarArista(2,6,12);
+        Grafo.AgregarArista(2,7,18);
+        Grafo.AgregarArista(3,6,9);
+        Grafo.AgregarArista(4,6,20);
+        Grafo.AgregarArista(5,7,11);
+
         // Menu
+        System.out.println("\n¡¡Bienvenido al proyecto de Grafos!!");
+        System.out.println("¿Que desea hacer con el grafo?");
+        System.out.println("1. Buscar camino mas corto");
+        System.out.println("2. Buscar el camino con peso minimo");
+        System.out.println("3. ");
+
         // If con codiciones pra uso de metodos
     }
 }

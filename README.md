@@ -14,7 +14,7 @@ Se crean todos los algoritmos vistos en clases para el estudio de Grafos
 
 # Busqueda en Amplitud o Anchura (Breadth First Search, BFS)
 - Recorre el grafo al primero comprobar el nodo actual y luego expandirlo al agregar sus sucesores al siguiente nivel.
-- El proceso se repite para todos los nodos del nivel actual  antes de moverse al siguiente.
+- El proceso se repite para todos los nodos del nivel actual antes de moverse al siguiente.
 
 # Busqueda en Profundidad (Depth First Search, DFS)
 - Recorre el grafo revisando primero el nodo actual y moviéndose después a uno de sus sucesores para repetir el proceso.

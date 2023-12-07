@@ -39,43 +39,49 @@ public class Grafos {
     // Metodos = Algoritmos
     public void EmparejamientoPerfecto(int S) {
         // Se inicia un array para almacenar emparejamientos
-        // El -1 indica que no hay emparezamientos para ese vertice
+        // El -1 indica que no hay emparejamientos para ese vertice
         int[] Emparejamiento = new int[Vertices];
         Arrays.fill(Emparejamiento, -1);
-
+        boolean emparejamientoEncontrado = false; // Variable para verificar si se encontró un emparejamiento
+     
         // Clase interna para DFS
         class DFS {
             boolean Dfs(int vertice, int[] emparejamiento) {
+                // Si el vertice ya tiene un emparejamiento, no se necesita buscar otro
+                if (emparejamiento[vertice] != -1) {
+                    return true;
+                }
+     
                 // Recorremos todos los vertices adyacentes al actual
                 for (int i : ListaAdy.get(vertice)) {
                     if (emparejamiento[i] == -1) {
-                        // Emparejamos el vertice actual con el adyacente
-                        emparejamiento[i] = vertice;
-                        emparejamiento[vertice] = i;
-                        // Se indica que se ha encontrado el emparejamiento
-                        return true;
+                      // Emparejamos el vertice actual con el adyacente
+                      emparejamiento[i] = vertice;
+                      emparejamiento[vertice] = i;
+                      // Se indica que se ha encontrado el emparejamiento
+                      return true;
                     }
                 }
-
+     
                 // Si no se encontro un emparejamiento se busca para los vertices adyacentes
                 for (int j : ListaAdy.get(vertice)) {
                     if (Dfs(Emparejamiento[j], Emparejamiento)) {
-                        // Emparejamos el vertice actual con el adyacente
-                        emparejamiento[vertice] = j;
-                        emparejamiento[j] = vertice;
-                        // Se indica que se ha encontrado el emparejamiento
-                        return true;
+                      // Emparejamos el vertice actual con el adyacente
+                      emparejamiento[vertice] = j;
+                      emparejamiento[j] = vertice;
+                      // Se indica que se ha encontrado el emparejamiento
+                      return true;
                     }
                 }
-
+     
                 // Si no se encontro emparejamiento se devuelve falso
                 return false;
             }
         }
-
+     
         // Se instancia la clase DFS
         DFS dfs = new DFS();
-
+     
         // Se recorren todos los vertices
         for (int i = 0; i < Vertices; i++) {
             if (Emparejamiento[i] == -1) {
@@ -83,16 +89,22 @@ public class Grafos {
                 if (!dfs.Dfs(i, Emparejamiento)) {
                     // Si no se logra encontrar un emparejamiento
                     System.out.println("No se pudo encontrar un emparejamiento perfecto");
+                    return; // Salir del método si no se encontró emparejamiento
+                }
+                else {
+                    emparejamientoEncontrado = true; // Si se encontró un emparejamiento, establecer la variable en true
                 }
             }
         }
-
-        // Si se encontro un emparejamiento y se muestra
-        System.out.println("Se ha encontrado un emparejamiento perfecto");
-        for (int i = 0; i < Vertices; i++) {
-            System.out.println(i + " -> " + Emparejamiento[i]);
+     
+        // Si se encontro un emparejamiento se muestra
+        if (emparejamientoEncontrado) {
+            System.out.println("Se ha encontrado un emparejamiento perfecto");
+            for (int i = 0; i < Vertices; i++) {
+                System.out.println(i + " -> " + Emparejamiento[i]);
+            }
         }
-    }
+    } 
 
     public void TMA_MatrimonioEstable() {
         // Inicia un conjunto libre con vertices
@@ -379,24 +391,71 @@ public class Grafos {
 
     public static void main(String[] args) {
         // Recibe el grafo
-        Grafos Grafo = new Grafos(7);
+        Grafos Grafo = new Grafos(6);
 
-        Grafo.AgregarArista(1, 2, 3);
-        Grafo.AgregarArista(1, 3, 5);
-        Grafo.AgregarArista(2,4,13);
-        Grafo.AgregarArista(2,6,12);
-        Grafo.AgregarArista(2,7,18);
-        Grafo.AgregarArista(3,6,9);
-        Grafo.AgregarArista(4,6,20);
-        Grafo.AgregarArista(5,7,11);
-
+        Grafo.AgregarArista(0, 1, 1);
+        Grafo.AgregarArista(0, 2, 2);
+        Grafo.AgregarArista(1, 3, 3);
+        Grafo.AgregarArista(1, 4, 4);
+        Grafo.AgregarArista(2, 3, 5);
+        Grafo.AgregarArista(2, 5, 6);
+        Grafo.AgregarArista(3, 4, 7);
+        Grafo.AgregarArista(3, 5, 8);
+        Grafo.AgregarArista(4, 5, 9);
+        
         // Menu
         System.out.println("\n¡¡Bienvenido al proyecto de Grafos!!");
-        System.out.println("¿Que desea hacer con el grafo?");
-        System.out.println("1. Buscar camino mas corto");
-        System.out.println("2. Buscar el camino con peso minimo");
-        System.out.println("3. ");
+        System.out.println("¿Que algoritmo desea utilizar?");
+        System.out.println("1. Emparejamiento Perfecto");
+        System.out.println("2. Matrimonio Estable");
+        System.out.println("3. BFS");
+        System.out.println("4. DFS");
+        System.out.println("5. Dijkstra");
+        System.out.println("6. Forward");
+        System.out.println("7. Bellman-Ford");
+        System.out.println("8. Ordenamiento Topologico");
+        System.out.println("9. Arbol de Expansion Minima\n");
+        System.out.println("Ingrese su respuesta aqui: ");
 
-        // If con codiciones pra uso de metodos
+        // Se utiliza para recibir respuesta del usuario
+        Scanner Scan = new Scanner(System.in);
+        int Respuesta = Scan.nextInt();
+
+        // Ejecuta un algoritmo basado en la respuesta del usuario
+        switch (Respuesta) {
+            case 1:
+                Grafo.EmparejamientoPerfecto(1);
+                break;
+            case 2:
+                Grafo.TMA_MatrimonioEstable();
+                break;
+            case 3:
+                Grafo.BFS_BusquedaEnAmplitud(1);
+                break;
+            case 4:
+                Grafo.DFS_BusquedaEnProfundidad(1);
+                break;
+            case 5:
+                Grafo.Dijkstra(1);
+                break;
+            case 6:
+                Grafo.Forward();
+                break;
+            case 7:
+                Grafo.BellmanFord(1);
+                break;
+            case 8:
+                Grafo.DAG_OrdenamientoTopologico();
+                break;
+            case 9:
+                Grafo.MST_ArbolDeExpansionMinima();
+                break;
+            default:
+                System.out.println("No se ha detectado una opcion");
+                break;
+        }
+
+        // Se cierra el Scanner
+        Scan.close();
     }
 }
